@@ -123,6 +123,6 @@ def hyper_parameter_updating(data, clusters, p, gama):      # input: (pd.datafra
 
     s_vector = np.zeros(shape=(1, p))
     for j in range(p):
-        s_vector[j] = (gama ** (1/p)) * (np.prod(main_vector) ** (1/p)) / main_vector[j]
+        s_vector[0, j] = (gama ** (1/p)) * (np.prod(main_vector) ** (1/p)) / main_vector[0, j]
 
     return s_vector

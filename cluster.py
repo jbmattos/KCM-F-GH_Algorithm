@@ -13,7 +13,7 @@ class Cluster:
         self.cluster_init(no_of_examples)
 
     def cluster_init(self, n):
-        self.prototype.append(random.randint(0, n))
+        self.prototype.append(random.randint(0, n-1))
         self.size = len(self.prototype)
 
         return
@@ -24,7 +24,7 @@ class Cluster:
         cluster_kernel_matrix = np.zeros(shape=(n, n))
 
         for e1_idx, element_1 in enumerate(self.prototype[:-1]):
-            for e2_idx, element_2 in enumerate(self.prototype[(e1_idx+1):]):
+            for e2_idx, element_2 in enumerate(self.prototype[:]):
                 kernel = kernel_matrix[element_1, element_2]
                 cluster_kernel_matrix[e1_idx, e2_idx] = kernel  # triangular matrix: superior
                 cluster_kernel_matrix[e2_idx, e1_idx] = kernel  # triangular matrix: inferior
