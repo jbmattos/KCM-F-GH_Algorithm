@@ -26,9 +26,12 @@ def main():
 
     kernel_matrix = generate_kernel_matrix(view.values, hp_vector)
     distances_matrix = generate_distances(kernel_matrix, clusters)
+    print(np.array_equal(distances_matrix[:,0], distances_matrix[:,1]))
+
 
     clusters, examples_location = generate_partition(kernel_matrix, distances_matrix, clusters)
-    # objective_function = get_objective_fnc(clusters)
+    objective_function = get_objective_fnc(clusters, distances_matrix)
+    print('Objective function = ', objective_function)
 
 
     # PARTITION ITERATIONS
@@ -41,6 +44,8 @@ def main():
         distances_matrix = generate_distances(kernel_matrix, clusters)
 
         clusters, examples_new_location = generate_partition(kernel_matrix, distances_matrix, clusters)
+        objective_function = get_objective_fnc(clusters, distances_matrix)
+        print('Objective function = ', objective_function)
 
         if np.array_equal(examples_location, examples_new_location):
             test = 0

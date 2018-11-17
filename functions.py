@@ -52,8 +52,8 @@ def generate_kernel_matrix(data, hyper_parameter):              # input: (pd.dat
     n = len(data)
     kernel_matrix = np.zeros(shape=(n, n))
 
-    for ex_1 in range(n-1):
-        for ex_2 in range(ex_1+1, n):
+    for ex_1 in range(n):
+        for ex_2 in range(ex_1, n):
             kernel = calculate_kernel(data[ex_1], data[ex_2], hyper_parameter)
             kernel_matrix[ex_1, ex_2] = kernel  # triangular matrix: superior
             kernel_matrix[ex_2, ex_1] = kernel  # triangular matrix: inferior
@@ -126,3 +126,18 @@ def hyper_parameter_updating(data, clusters, p, gama):      # input: (pd.datafra
         s_vector[0, j] = (gama ** (1/p)) * (np.prod(main_vector) ** (1/p)) / main_vector[0, j]
 
     return s_vector
+
+
+def get_objective_fnc(clusters, distances_matrix):
+
+    objective_fnc = 0
+
+    for c_idx, cluster in enumerate(clusters):
+
+        dist_sum = 0
+        for element in cluster.prototype:
+            dist_sum += distances_matrix[element, c_idx]
+
+        objective_fnc += dist_sum
+
+    return objective_fnc
