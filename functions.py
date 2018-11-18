@@ -48,7 +48,7 @@ def calculate_kernel(ex_1, ex_2, hyper_parameter):              # input: (np.arr
     return np.exp(-0.5 * kernel)
 
 
-def generate_kernel_matrix(data, hyper_parameter):              # input: (pd.dataframe.values, np.array)
+def generate_kernel_matrix(data, hyper_parameter, clusters):              # input: (pd.dataframe.values, np.array)
 
     n = len(data)
     kernel_matrix = np.zeros(shape=(n, n))
@@ -59,7 +59,10 @@ def generate_kernel_matrix(data, hyper_parameter):              # input: (pd.dat
             kernel_matrix[ex_1, ex_2] = kernel  # triangular matrix: superior
             kernel_matrix[ex_2, ex_1] = kernel  # triangular matrix: inferior
 
-    return kernel_matrix
+    for cluster in clusters:
+        cluster.set_cluster_kernel(kernel_matrix)
+
+    return kernel_matrix, clusters
 
 
 def cluster_initialization(no_of_clusters, no_of_examples):     # input: (int, int)
@@ -86,6 +89,8 @@ def generate_distances(kernel_matrix, clusters):                # input: (np.mat
             for element in cluster.prototype:
                 kernel_sum += kernel_matrix[example, element]
             distances_matrix[example, c_idx] = 1 - (2 * (kernel_sum/cluster.size)) + cluster.kernel/(cluster.size ** 2)
+            if distances_matrix[example, c_idx] < 0:
+                print('Menor que 0')
 
     return distances_matrix
 
@@ -112,7 +117,6 @@ def generate_partition(kernel_matrix, distances_matrix, clusters):  # input: (np
 
         cluster.prototype = cluster_elements[:]
         cluster.size = len(cluster_elements)
-        cluster.set_cluster_kernel(kernel_matrix)
 
     return clusters, elements_cluster_location
 

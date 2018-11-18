@@ -24,7 +24,7 @@ def main():
     clusters = cluster_initialization(c, n)  # vector of cluster objects
     hp_vector = np.full(p, fill_value=gama**(1/p))      # hyper-parameter vector
 
-    kernel_matrix = generate_kernel_matrix(view.values, hp_vector)
+    kernel_matrix, clusters = generate_kernel_matrix(view.values, hp_vector, clusters)
     distances_matrix = generate_distances(kernel_matrix, clusters)
 
     clusters, examples_location = generate_partition(kernel_matrix, distances_matrix, clusters)
@@ -36,9 +36,9 @@ def main():
     test = 1
     while test == 1:
 
+        kernel_matrix, clusters = generate_kernel_matrix(view.values, hp_vector, clusters)
         hp_vector = hyper_parameter_updating(view.values, clusters, p, gama)
 
-        kernel_matrix = generate_kernel_matrix(view.values, hp_vector)
         distances_matrix = generate_distances(kernel_matrix, clusters)
 
         clusters, examples_new_location = generate_partition(kernel_matrix, distances_matrix, clusters)
