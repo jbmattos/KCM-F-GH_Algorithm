@@ -1,3 +1,4 @@
+import random
 import numpy as np
 from cluster import Cluster
 from sklearn.metrics.pairwise import euclidean_distances
@@ -80,11 +81,11 @@ def generate_distances(kernel_matrix, clusters):                # input: (np.mat
 
     for example in range(n):                            # iterating all examples
 
-        kernel_sum = 0
         for c_idx, cluster in enumerate(clusters):      # iterating all clusters (for each example)
+            kernel_sum = 0
             for element in cluster.prototype:
                 kernel_sum += kernel_matrix[example, element]
-            distances_matrix[example, c_idx] = 1 - (2 * kernel_sum)/cluster.size + cluster.kernel/(cluster.size ** 2)
+            distances_matrix[example, c_idx] = 1 - (2 * (kernel_sum/cluster.size)) + cluster.kernel/(cluster.size ** 2)
 
     return distances_matrix
 
@@ -92,6 +93,7 @@ def generate_distances(kernel_matrix, clusters):                # input: (np.mat
 def generate_partition(kernel_matrix, distances_matrix, clusters):  # input: (np.matrix, np.matrix, list_of_objects)
 
     elements_cluster_location = distances_matrix.argmin(axis=1)
+    n = len(elements_cluster_location)
 
     for c_idx, cluster in enumerate(clusters):
 
@@ -100,6 +102,13 @@ def generate_partition(kernel_matrix, distances_matrix, clusters):  # input: (np
 
         for e in elements:
             cluster_elements.append(e[0])
+
+        if not cluster_elements:
+            cluster_new_ex = random.randint(0, n - 1)
+            old_cluster_ex = elements_cluster_location[cluster_new_ex]
+            elements_cluster_location[cluster_new_ex] = c_idx
+            if old_cluster_ex < c_idx:
+                clusters[old_cluster_ex].prototype.remove(cluster_new_ex)
 
         cluster.prototype = cluster_elements[:]
         cluster.size = len(cluster_elements)

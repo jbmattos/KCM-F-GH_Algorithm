@@ -8,19 +8,26 @@ class Cluster:
         self.prototype = []
         self.size = None
         self.kernel_matrix = None
-        self.kernel = 1
+        self.kernel = None
 
         self.cluster_init(no_of_examples)
 
     def cluster_init(self, n):
         self.prototype.append(random.randint(0, n-1))
         self.size = len(self.prototype)
+        self.kernel_matrix = np.full(shape=(1, 1), fill_value=1)
+        self.kernel = 1
 
         return
 
     def set_cluster_kernel(self, kernel_matrix):
 
         n = self.size
+
+        # if n == 1:
+        #     self.kernel_matrix = np.full(shape=(n, n), fill_value=1)
+        #     self.kernel = 1
+
         cluster_kernel_matrix = np.zeros(shape=(n, n))
 
         for e1_idx, element_1 in enumerate(self.prototype):

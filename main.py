@@ -21,13 +21,11 @@ def main():
 
 
     # INITIALIZATION
-    clusters = cluster_initialization(c, n)             # vector of cluster objects
+    clusters = cluster_initialization(c, n)  # vector of cluster objects
     hp_vector = np.full(p, fill_value=gama**(1/p))      # hyper-parameter vector
 
     kernel_matrix = generate_kernel_matrix(view.values, hp_vector)
     distances_matrix = generate_distances(kernel_matrix, clusters)
-    print(np.array_equal(distances_matrix[:,0], distances_matrix[:,1]))
-
 
     clusters, examples_location = generate_partition(kernel_matrix, distances_matrix, clusters)
     objective_function = get_objective_fnc(clusters, distances_matrix)
@@ -47,6 +45,7 @@ def main():
         objective_function = get_objective_fnc(clusters, distances_matrix)
         print('Objective function = ', objective_function)
 
+        print('Examples location equal comparison: ', np.array_equal(examples_location, examples_new_location))
         if np.array_equal(examples_location, examples_new_location):
             test = 0
 
