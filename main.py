@@ -29,12 +29,16 @@ def main():
 
     clusters, examples_location = generate_partition(kernel_matrix, distances_matrix, clusters)
     objective_function = get_objective_fnc(clusters, distances_matrix)
-    print('Objective function = ', objective_function)
+    print('Iteration: 0')
+    print('Objective function = ', objective_function, '\n')
 
 
     # PARTITION ITERATIONS
     test = 1
+    it = 1
     while test == 1:
+
+        print('Iteration: ', it)
 
         kernel_matrix, clusters = generate_kernel_matrix(view.values, hp_vector, clusters)
         hp_vector = hyper_parameter_updating(view.values, clusters, p, gama)
@@ -43,13 +47,14 @@ def main():
 
         clusters, examples_new_location = generate_partition(kernel_matrix, distances_matrix, clusters)
         objective_function = get_objective_fnc(clusters, distances_matrix)
-        print('Objective function = ', objective_function)
+        print('Objective function = ', objective_function, '\n')
 
-        print('Examples location equal comparison: ', np.array_equal(examples_location, examples_new_location))
         if np.array_equal(examples_location, examples_new_location):
+            print('Clusters converged: end code')
             test = 0
 
         examples_location = examples_new_location[:]
+        it += 1
 
 
 if __name__ == '__main__':

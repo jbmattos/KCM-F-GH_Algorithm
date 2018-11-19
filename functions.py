@@ -7,11 +7,12 @@ from sklearn.metrics.pairwise import euclidean_distances
 def get_view(data, n_view):                                     # input: (pd.dataframe, int)
 
     if n_view == 1:
-        view = data.drop(labels='CLASS', axis=1)
+        drop_index = [0, 3, 5]
+        view = data.drop(data.columns[drop_index], axis=1)
         return view
 
     if n_view == 2:
-        drop_index = [0, 3, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+        drop_index = [0, 3, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
         view = data.drop(data.columns[drop_index], axis=1)
         return view
 
@@ -136,6 +137,8 @@ def hyper_parameter_updating(data, clusters, p, gama):      # input: (pd.datafra
 
     s_vector = np.zeros(shape=(1, p))
     for j in range(p):
+        if main_vector[0, j] == 0:
+            print('Division by 0')
         s_vector[0, j] = (gama ** (1/p)) * (np.prod(main_vector) ** (1/p)) / main_vector[0, j]
 
     return s_vector
