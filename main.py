@@ -1,5 +1,6 @@
 import pandas as pd
 from functions import *
+from sklearn.metrics import adjusted_rand_score
 
 
 def main():
@@ -15,8 +16,7 @@ def main():
     n = len(view)                   # number of examples
     p = len(view.iloc[0])           # number of attributes (dimensionality)
 
-    # sigma2 = get_sigma2(view.values)    # sigma2_view2 = 126.56
-    sigma2 = 126.56
+    sigma2 = get_sigma2(view.values)    # sigma2_view2 = 126.56
     gama = (1/sigma2)**p
 
 
@@ -50,11 +50,14 @@ def main():
         print('Objective function = ', objective_function, '\n')
 
         if np.array_equal(examples_location, examples_new_location):
-            print('Clusters converged: end code')
+            print('Clusters converged: end while')
             test = 0
 
         examples_location = examples_new_location[:]
         it += 1
+
+    rand_idx = adjusted_rand_score(view_classes, examples_location)
+    print('Rand index = ', rand_idx)
 
 
 if __name__ == '__main__':

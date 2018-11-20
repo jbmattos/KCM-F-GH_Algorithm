@@ -24,10 +24,6 @@ class Cluster:
 
         n = self.size
 
-        # if n == 1:
-        #     self.kernel_matrix = np.full(shape=(n, n), fill_value=1)
-        #     self.kernel = 1
-
         cluster_kernel_matrix = np.zeros(shape=(n, n))
 
         for e1_idx, element_1 in enumerate(self.prototype):
