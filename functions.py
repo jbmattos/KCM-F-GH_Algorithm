@@ -1,4 +1,5 @@
 import random
+import json
 import numpy as np
 from cluster import Cluster
 from sklearn.metrics.pairwise import euclidean_distances
@@ -137,8 +138,6 @@ def hyper_parameter_updating(data, clusters, p, gama):      # input: (pd.datafra
 
     s_vector = np.zeros(shape=(1, p))
     for j in range(p):
-        if main_vector[0, j] == 0:
-            print('Division by 0')
         s_vector[0, j] = (gama ** (1/p)) * (np.prod(main_vector) ** (1/p)) / main_vector[0, j]
 
     return s_vector
@@ -157,3 +156,34 @@ def get_objective_fnc(clusters, distances_matrix):
         objective_fnc += dist_sum
 
     return objective_fnc
+
+
+def print_results(partition, clusters, hp_vector, rand_idx):
+    print('PARTITION: ', partition)
+    print('Adjusted rand index = ', rand_idx)
+    print('Hyper-parameter vector: ', hp_vector)
+
+    for c_idx, cluster in enumerate(clusters):
+        print('\nCluster ', c_idx, ':')
+        print('Number of objects: ', cluster.size)
+        print('List of objects:\n', cluster.prototype)
+
+    return
+
+
+def save_results(partition, clusters, hp_vector, rand_idx, examples_location):
+
+    f = open("KCM-F-GH_view2_results.txt", "a+")
+    f.write('\n\nPARTITION: ' + repr(partition))
+    f.write('\n\nAdjusted rand index = ' + repr(rand_idx))
+    f.write('\nHyper-parameter vector: ' + repr(hp_vector))
+    for c_idx, cluster in enumerate(clusters):
+        f.write('\n\nCluster ' + repr(c_idx) + ':')
+        f.write('\nNumber of objects: ' + repr(cluster.size))
+        f.write('\nList of objects:\n' + repr(cluster.prototype))
+    f.close()
+
+    # with open('result.json', 'w+') as fp:   # saves last elements-cluster position
+    #     json.dump(examples_location, fp)
+
+    return
