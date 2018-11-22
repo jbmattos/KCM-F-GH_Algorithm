@@ -9,8 +9,11 @@ def main():
     data = pd.read_csv('datasets/segmentation.test.txt', delimiter=',')
     view_classes = data['CLASS']
 
+    file = "KCM-F-GH_view2_results.txt"
+    log_file = "log_view2.txt"
     n_view = 2                      # 1:complete view   2:shape_view    3:rgb_view
     view = get_view(data, n_view)
+    # view = z_score_normalization(view)
 
     c = 7                           # number of clusters
     n = len(view)                   # number of examples
@@ -18,10 +21,11 @@ def main():
 
     sigma2 = get_sigma2(view.values)    # sigma2_view2 = 126.56
     gama = (1/sigma2)**p
-    best_objective_function = float("inf")
+    # best_objective_function = float("inf")
+    best_objective_function = 707.2691096612986
 
-    for partition in range(100):
-        print('Partition: ', partition)
+    for partition in range(68, 100):
+        print('\n\n>> PARTITION: ', partition)
 
         # INITIALIZATION
         clusters = cluster_initialization(c, n)  # vector of cluster objects
@@ -64,8 +68,12 @@ def main():
 
         if objective_function < best_objective_function:
             best_objective_function = objective_function
-            print_results(partition, clusters, hp_vector, rand_idx)
-            save_results(partition, clusters, hp_vector, rand_idx, examples_location)
+            print_results(partition, clusters, hp_vector, rand_idx, objective_function)
+            save_results(file, partition, clusters, hp_vector, rand_idx, objective_function, examples_location)
+
+        f = open(log_file, "a+")
+        f.write('\n>> PARTITION: ' + repr(partition))
+        f.close()
 
 
 if __name__ == '__main__':

@@ -12,8 +12,8 @@ class Cluster:
 
         self.cluster_init(no_of_examples)
 
-    def cluster_init(self, n):
-        self.prototype.append(random.randint(0, n-1))
+    def cluster_init(self, prototype):
+        self.prototype.append(prototype)
         self.size = len(self.prototype)
         self.kernel_matrix = np.full(shape=(1, 1), fill_value=1)
         self.kernel = 1

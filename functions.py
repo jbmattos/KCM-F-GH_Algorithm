@@ -8,12 +8,12 @@ from sklearn.metrics.pairwise import euclidean_distances
 def get_view(data, n_view):                                     # input: (pd.dataframe, int)
 
     if n_view == 1:
-        drop_index = [0, 3, 5]
+        drop_index = [0, 3, 4, 5]
         view = data.drop(data.columns[drop_index], axis=1)
         return view
 
     if n_view == 2:
-        drop_index = [0, 3, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+        drop_index = [0, 3, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
         view = data.drop(data.columns[drop_index], axis=1)
         return view
 
@@ -70,8 +70,11 @@ def generate_kernel_matrix(data, hyper_parameter, clusters):              # inpu
 def cluster_initialization(no_of_clusters, no_of_examples):     # input: (int, int)
 
     clusters = []
+    clusters_initial_prototypes = random.sample(range(no_of_examples), no_of_clusters)
+
     for c in range(no_of_clusters):
-        cluster_obj = Cluster(no_of_examples)
+        prototype = clusters_initial_prototypes[c]
+        cluster_obj = Cluster(prototype)
         clusters.append(cluster_obj)
 
     return clusters
@@ -138,6 +141,8 @@ def hyper_parameter_updating(data, clusters, p, gama):      # input: (pd.datafra
 
     s_vector = np.zeros(shape=(1, p))
     for j in range(p):
+        if main_vector[0, j] == 0:
+            print('Division for Zero')
         s_vector[0, j] = (gama ** (1/p)) * (np.prod(main_vector) ** (1/p)) / main_vector[0, j]
 
     return s_vector
@@ -158,8 +163,9 @@ def get_objective_fnc(clusters, distances_matrix):
     return objective_fnc
 
 
-def print_results(partition, clusters, hp_vector, rand_idx):
-    print('PARTITION: ', partition)
+def print_results(partition, clusters, hp_vector, rand_idx, objective_function):
+    print('\n\nBEST PARTITION: ', partition)
+    print('Objective function ', objective_function)
     print('Adjusted rand index = ', rand_idx)
     print('Hyper-parameter vector: ', hp_vector)
 
@@ -171,12 +177,14 @@ def print_results(partition, clusters, hp_vector, rand_idx):
     return
 
 
-def save_results(partition, clusters, hp_vector, rand_idx, examples_location):
+def save_results(file, partition, clusters, hp_vector, rand_idx, objective_function, examples_location):
 
-    f = open("KCM-F-GH_view2_results.txt", "a+")
-    f.write('\n\nPARTITION: ' + repr(partition))
-    f.write('\n\nAdjusted rand index = ' + repr(rand_idx))
+    f = open(file, "a+")
+    f.write('\n\n>> PARTITION: ' + repr(partition))
+    f.write('\n\nObjective function = ' + repr(objective_function))
+    f.write('\nAdjusted rand index = ' + repr(rand_idx))
     f.write('\nHyper-parameter vector: ' + repr(hp_vector))
+    f.write('\nExamples location: ' + repr(list(examples_location)))
     for c_idx, cluster in enumerate(clusters):
         f.write('\n\nCluster ' + repr(c_idx) + ':')
         f.write('\nNumber of objects: ' + repr(cluster.size))
@@ -187,3 +195,18 @@ def save_results(partition, clusters, hp_vector, rand_idx, examples_location):
     #     json.dump(examples_location, fp)
 
     return
+
+
+def z_score_normalization(view):        # input: (pd.dataframe)
+
+    p = len(view.iloc[0])
+    # data = view.values
+    mean = np.mean(view.values, axis=0)
+    std = np.std(view.values, axis=0)
+
+    for col in range(p):
+        attr = view.values[:, col]
+        norm_data = np.subtract(attr, mean[col]) / std[col]
+        view.values[:, col] = norm_data[:]
+
+    return view
