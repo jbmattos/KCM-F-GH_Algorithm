@@ -23,7 +23,7 @@ def main():
     gama = (1/sigma2)**p
     best_objective_function = float("inf")
 
-    for partition in range(77, 100):
+    for partition in range(100):
         print('\n\n>> PARTITION: ', partition)
 
         # INITIALIZATION
