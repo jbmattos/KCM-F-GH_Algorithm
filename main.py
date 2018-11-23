@@ -21,10 +21,9 @@ def main():
 
     sigma2 = get_sigma2(view.values)    # sigma2_view2 = 126.56
     gama = (1/sigma2)**p
-    # best_objective_function = float("inf")
-    best_objective_function = 707.2691096612986
+    best_objective_function = float("inf")
 
-    for partition in range(68, 100):
+    for partition in range(77, 100):
         print('\n\n>> PARTITION: ', partition)
 
         # INITIALIZATION
@@ -34,11 +33,10 @@ def main():
         kernel_matrix, clusters = generate_kernel_matrix(view.values, hp_vector, clusters)
         distances_matrix = generate_distances(kernel_matrix, clusters)
 
-        clusters, examples_location = generate_partition(kernel_matrix, distances_matrix, clusters)
+        clusters, examples_location = generate_partition(distances_matrix, clusters)
         objective_function = get_objective_fnc(clusters, distances_matrix)
         print('Iteration: 0')
         print('Objective function = ', objective_function, '\n')
-
 
         # PARTITION ITERATIONS
         test = 1
@@ -52,7 +50,7 @@ def main():
 
             distances_matrix = generate_distances(kernel_matrix, clusters)
 
-            clusters, examples_new_location = generate_partition(kernel_matrix, distances_matrix, clusters)
+            clusters, examples_new_location = generate_partition(distances_matrix, clusters)
             objective_function = get_objective_fnc(clusters, distances_matrix)
             print('Objective function = ', objective_function, '\n')
 

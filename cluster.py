@@ -4,13 +4,13 @@ import numpy as np
 
 class Cluster:
 
-    def __init__(self, no_of_examples):
+    def __init__(self, prototype):
         self.prototype = []
         self.size = None
         self.kernel_matrix = None
         self.kernel = None
 
-        self.cluster_init(no_of_examples)
+        self.cluster_init(prototype)
 
     def cluster_init(self, prototype):
         self.prototype.append(prototype)

@@ -1,5 +1,4 @@
 import random
-import json
 import numpy as np
 from cluster import Cluster
 from sklearn.metrics.pairwise import euclidean_distances
@@ -50,7 +49,7 @@ def calculate_kernel(ex_1, ex_2, hyper_parameter):              # input: (np.arr
     return np.exp(-0.5 * kernel)
 
 
-def generate_kernel_matrix(data, hyper_parameter, clusters):              # input: (pd.dataframe.values, np.array)
+def generate_kernel_matrix(data, hyper_parameter, clusters):    # input: (pd.dataframe.values, np.array)
 
     n = len(data)
     kernel_matrix = np.zeros(shape=(n, n))
@@ -94,13 +93,11 @@ def generate_distances(kernel_matrix, clusters):                # input: (np.mat
             for element in cluster.prototype:
                 kernel_sum += kernel_matrix[example, element]
             distances_matrix[example, c_idx] = 1 - (2 * (kernel_sum/cluster.size)) + cluster.kernel/(cluster.size ** 2)
-            if distances_matrix[example, c_idx] < 0:
-                print('Menor que 0')
 
     return distances_matrix
 
 
-def generate_partition(kernel_matrix, distances_matrix, clusters):  # input: (np.matrix, np.matrix, list_of_objects)
+def generate_partition(distances_matrix, clusters):  # input: (np.matrix, np.matrix, list_of_objects)
 
     elements_cluster_location = distances_matrix.argmin(axis=1)
     n = len(elements_cluster_location)
@@ -141,14 +138,12 @@ def hyper_parameter_updating(data, clusters, p, gama):      # input: (pd.datafra
 
     s_vector = np.zeros(shape=(1, p))
     for j in range(p):
-        if main_vector[0, j] == 0:
-            print('Division for Zero')
         s_vector[0, j] = (gama ** (1/p)) * (np.prod(main_vector) ** (1/p)) / main_vector[0, j]
 
     return s_vector
 
 
-def get_objective_fnc(clusters, distances_matrix):
+def get_objective_fnc(clusters, distances_matrix):          # input: (list_of_objects, np.matrix)
 
     objective_fnc = 0
 
@@ -164,6 +159,7 @@ def get_objective_fnc(clusters, distances_matrix):
 
 
 def print_results(partition, clusters, hp_vector, rand_idx, objective_function):
+
     print('\n\nBEST PARTITION: ', partition)
     print('Objective function ', objective_function)
     print('Adjusted rand index = ', rand_idx)
@@ -191,16 +187,12 @@ def save_results(file, partition, clusters, hp_vector, rand_idx, objective_funct
         f.write('\nList of objects:\n' + repr(cluster.prototype))
     f.close()
 
-    # with open('result.json', 'w+') as fp:   # saves last elements-cluster position
-    #     json.dump(examples_location, fp)
-
     return
 
 
-def z_score_normalization(view):        # input: (pd.dataframe)
+def z_score_normalization(view):                            # input: (pd.dataframe)
 
     p = len(view.iloc[0])
-    # data = view.values
     mean = np.mean(view.values, axis=0)
     std = np.std(view.values, axis=0)
 
